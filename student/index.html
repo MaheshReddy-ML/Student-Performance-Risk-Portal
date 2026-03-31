@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Performance Risk Portal</title>
+    <style>
+      :root {
+        --ink-950: #0e1726;
+        --ink-900: #162235;
+        --ink-800: #223049;
+        --ink-700: #425068;
+        --ink-500: #728098;
+        --paper-50: #fbf7f1;
+        --paper-100: #f4ede3;
+        --paper-200: #e6dbcd;
+        --panel: rgba(251, 247, 241, 0.88);
+        --panel-strong: rgba(255, 252, 247, 0.97);
+        --line: rgba(24, 35, 53, 0.12);
+        --line-strong: rgba(24, 35, 53, 0.18);
+        --accent: #e46c38;
+        --accent-deep: #bd4f26;
+        --accent-soft: rgba(228, 108, 56, 0.16);
+        --teal: #177970;
+        --teal-deep: #105952;
+        --teal-soft: rgba(23, 121, 112, 0.14);
+        --gold: #c7911f;
+        --gold-soft: rgba(199, 145, 31, 0.16);
+        --danger: #bf4a42;
+        --danger-soft: rgba(191, 74, 66, 0.16);
+        --shadow-lg: 0 28px 80px rgba(9, 18, 31, 0.18);
+        --shadow-md: 0 16px 36px rgba(12, 22, 38, 0.1);
+        --radius-2xl: 32px;
+        --radius-xl: 24px;
+        --radius-lg: 18px;
+        --radius-md: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        color: var(--ink-950);
+        background:
+          radial-gradient(circle at 14% 18%, rgba(228, 108, 56, 0.18), transparent 26%),
+          radial-gradient(circle at 82% 14%, rgba(23, 121, 112, 0.17), transparent 24%),
+          linear-gradient(180deg, #f5efe7 0%, #ede5da 48%, #e8dccd 100%);
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      body::before {
+        background-image:
+          linear-gradient(rgba(14, 23, 38, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 23, 38, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 92%);
+      }
+
+      body::after {
+        background:
+          radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.68), transparent 42%),
+          linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.14) 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .page-shell {
+        width: min(1320px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 18px 0 48px;
+        position: relative;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 18px;
+        padding: 14px 18px;
+        border-radius: 999px;
+        background: rgba(255, 252, 247, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.72);
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .brand-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 15px;
+        display: grid;
+        place-items: center;
+        font-family: "Iowan Old Style", "Palatino Linotype", serif;
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: #fffaf3;
+        background:
+          linear-gradient(145deg, rgba(23, 121, 112, 1), rgba(228, 108, 56, 0.9)),
+          var(--ink-900);
+        box-shadow: 0 12px 26px rgba(16, 89, 82, 0.25);
+      }
+
+      .brand-copy {
+        min-width: 0;
+      }
+
+      .brand-copy strong,
+      .brand-copy span {
+        display: block;
+      }
+
+      .brand-copy strong {
+        font-size: 0.96rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .brand-copy span {
+        margin-top: 4px;
+        color: var(--ink-700);
+        font-size: 0.88rem;
+      }
+
+      .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .status-pill,
+      .ghost-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 0.86rem;
+        font-weight: 700;
+      }
+
+      .status-pill {
+        background: rgba(14, 23, 38, 0.06);
+        color: var(--ink-900);
+      }
+
+      .status-pill::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--ink-500);
+        box-shadow: 0 0 0 5px rgba(114, 128, 152, 0.16);
+      }
+
+      .status-pill[data-tone="live"]::before {
+        background: var(--teal);
+        box-shadow: 0 0 0 5px rgba(23, 121, 112, 0.16);
+      }
+
+      .status-pill[data-tone="warm"]::before {
+        background: var(--accent);
+        box-shadow: 0 0 0 5px rgba(228, 108, 56, 0.16);
+      }
+
+      .status-pill[data-tone="alert"]::before {
+        background: var(--danger);
+        box-shadow: 0 0 0 5px rgba(191, 74, 66, 0.16);
+      }
+
+      .ghost-link {
+        color: var(--ink-900);
+        background: rgba(255, 255, 255, 0.54);
+        border: 1px solid rgba(14, 23, 38, 0.08);
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid rgba(255, 255, 255, 0.68);
+        box-shadow: var(--shadow-lg);
+        backdrop-filter: blur(18px);
+      }
+
+      .reveal {
+        animation: reveal 500ms ease both;
+      }
+
+      .reveal.delay-1 {
+        animation-delay: 90ms;
+      }
+
+      .reveal.delay-2 {
+        animation-delay: 160ms;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .masthead {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        gap: 22px;
+        padding: 28px;
+        border-radius: var(--radius-2xl);
+      }
+
+      .masthead::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(130deg, rgba(255, 255, 255, 0.28), transparent 48%),
+          radial-gradient(circle at right center, rgba(23, 121, 112, 0.12), transparent 30%);
+        pointer-events: none;
+      }
+
+      .masthead-copy,
+      .masthead-preview {
+        position: relative;
+        z-index: 1;
+      }
+
+      .kicker {
+        margin: 0 0 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.64);
+        color: var(--teal-deep);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      .block-title {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+        letter-spacing: -0.035em;
+      }
+
+      h1 {
+        max-width: 11ch;
+        font-size: clamp(2.9rem, 5vw, 5.1rem);
+        line-height: 0.92;
+      }
+
+      .lede {
+        max-width: 61ch;
+        margin: 20px 0 0;
+        color: var(--ink-700);
+        font-size: 1.04rem;
+        line-height: 1.72;
+      }
+
+      .masthead-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 26px;
+      }
+
+      .primary-link,
+      .secondary-link,
+      .primary-button,
+      .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 18px;
+        border-radius: 16px;
+        border: 0;
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease, background 160ms ease;
+      }
+
+      .primary-link,
+      .primary-button {
+        background: linear-gradient(140deg, var(--accent), #f38c58);
+        color: #fffaf4;
+        font-weight: 800;
+        box-shadow: 0 16px 32px rgba(228, 108, 56, 0.26);
+      }
+
+      .secondary-link,
+      .secondary-button {
+        background: rgba(14, 23, 38, 0.06);
+        color: var(--ink-900);
+        font-weight: 700;
+      }
+
+      .primary-link:hover,
+      .secondary-link:hover,
+      .primary-button:hover,
+      .secondary-button:hover {
+        transform: translateY(-1px);
+      }
+
+      .primary-button:disabled,
+      .secondary-button:disabled {
+        opacity: 0.7;
+        cursor: wait;
+      }
+
+      .status-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 26px;
+      }
+
+      .status-card {
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid rgba(14, 23, 38, 0.08);
+      }
+
+      .status-card span,
+      .mini-label {
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.76rem;
+        font-weight: 800;
+        color: var(--ink-500);
+      }
+
+      .status-card strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 1.6rem;
+        letter-spacing: -0.04em;
+      }
+
+      .status-card small {
+        display: block;
+        margin-top: 8px;
+        color: var(--ink-700);
+        line-height: 1.5;
+      }
+
+      .masthead-preview {
+        display: grid;
+        gap: 16px;
+      }
+
+      .preview-card,
+      .preview-subgrid > article {
+        padding: 22px;
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(14, 23, 38, 0.93), rgba(24, 35, 53, 0.95)),
+          var(--ink-950);
+        color: #f8f5ef;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 40px rgba(14, 23, 38, 0.22);
+      }
+
+      .preview-card p,
+      .preview-subgrid p {
+        margin: 0;
+        color: rgba(248, 245, 239, 0.75);
+        line-height: 1.6;
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+        gap: 18px;
+        margin-top: 16px;
+        align-items: center;
+      }
+
+      .preview-ring {
+        --progress: 77.5;
+        width: min(220px, 100%);
+        aspect-ratio: 1;
+        margin: 0 auto;
+        padding: 18px;
+        border-radius: 999px;
+        background:
+          conic-gradient(var(--accent) calc(var(--progress) * 1%), rgba(255, 255, 255, 0.1) 0),
+          radial-gradient(circle at center, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+        display: grid;
+        place-items: center;
+      }
+
+      .preview-ring::before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(13, 22, 35, 1), rgba(24, 35, 53, 1));
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+        grid-area: 1 / 1;
+      }
+
+      .preview-ring-copy {
+        grid-area: 1 / 1;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .preview-ring-copy strong {
+        display: block;
+        font-size: 2rem;
+        letter-spacing: -0.04em;
+      }
+
+      .preview-ring-copy span {
+        display: block;
+        margin-top: 8px;
+        color: rgba(248, 245, 239, 0.7);
+        font-size: 0.88rem;
+      }
+
+      .distribution-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .distribution-card {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .distribution-card strong {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 1rem;
+      }
+
+      .distribution-card span {
+        display: block;
+        margin-top: 6px;
+        color: rgba(248, 245, 239, 0.66);
+        font-size: 0.86rem;
+      }
+
+      .preview-subgrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .main-grid {
+        margin-top: 22px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        gap: 22px;
+        align-items: start;
+      }
+
+      .stack {
+        display: grid;
+        gap: 22px;
+      }
+
+      .intake-panel,
+      .result-panel,
+      .insight-panel,
+      .system-panel,
+      .support-panel {
+        border-radius: var(--radius-2xl);
+        padding: 28px;
+      }
+
+      .panel-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 24px;
+      }
+
+      .panel-head p {
+        margin: 10px 0 0;
+        color: var(--ink-700);
+        line-height: 1.65;
+      }
+
+      .panel-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .panel-badge.accent {
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+      }
+
+      .panel-badge.teal {
+        background: var(--teal-soft);
+        color: var(--teal-deep);
+      }
+
+      .panel-badge.gold {
+        background: var(--gold-soft);
+        color: #8e5f0b;
+      }
+
+      .rail {
+        display: grid;
+        gap: 22px;
+        position: sticky;
+        top: 18px;
+      }
+
+      form {
+        display: grid;
+        gap: 18px;
+      }
+
+      fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        min-width: 0;
+      }
+
+      .form-block {
+        padding: 20px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.52);
+        border: 1px solid rgba(14, 23, 38, 0.08);
+      }
+
+      .block-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+      }
+
+      .block-title {
+        font-size: 1.4rem;
+      }
+
+      .block-head p {
+        margin: 8px 0 0;
+        color: var(--ink-700);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+
+      .block-index {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: rgba(14, 23, 38, 0.06);
+        font-weight: 800;
+        color: var(--ink-900);
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field.span-2 {
+        grid-column: 1 / -1;
+      }
+
+      .field label {
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .field small {
+        color: var(--ink-500);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      .control-shell {
+        position: relative;
+      }
+
+      .control-shell input,
+      .control-shell select {
+        width: 100%;
+        padding: 15px 16px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: rgba(255, 252, 247, 0.94);
+        color: var(--ink-950);
+        transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+      }
+
+      .control-shell input:hover,
+      .control-shell select:hover {
+        border-color: var(--line-strong);
+      }
+
+      .control-shell input:focus,
+      .control-shell select:focus {
+        outline: none;
+        transform: translateY(-1px);
+        border-color: rgba(228, 108, 56, 0.55);
+        box-shadow: 0 0 0 5px rgba(228, 108, 56, 0.12);
+        background: #fffefb;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding-top: 8px;
+      }
+
+      .form-footnote {
+        margin: 4px 0 0;
+        color: var(--ink-500);
+        font-size: 0.86rem;
+        line-height: 1.6;
+      }
+
+      .result-shell {
+        display: grid;
+        gap: 18px;
+      }
+
+      .result-empty,
+      .result-error,
+      .result-loading {
+        min-height: 340px;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        border-radius: 24px;
+        background:
+          linear-gradient(145deg, rgba(228, 108, 56, 0.08), rgba(23, 121, 112, 0.08)),
+          rgba(255, 255, 255, 0.45);
+        border: 1px dashed rgba(14, 23, 38, 0.14);
+        text-align: center;
+      }
+
+      .result-empty h3,
+      .result-error h3,
+      .result-loading h3 {
+        font-size: 1.7rem;
+      }
+
+      .result-empty p,
+      .result-error p,
+      .result-loading p {
+        max-width: 34ch;
+        margin: 10px auto 0;
+        color: var(--ink-700);
+        line-height: 1.65;
+      }
+
+      .loading-stack {
+        width: min(320px, 100%);
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .loading-line {
+        height: 14px;
+        border-radius: 999px;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.2)),
+          rgba(14, 23, 38, 0.08);
+        background-size: 220px 100%;
+        animation: shimmer 1.6s linear infinite;
+      }
+
+      .loading-line:nth-child(2) {
+        width: 82%;
+      }
+
+      .loading-line:nth-child(3) {
+        width: 68%;
+      }
+
+      @keyframes shimmer {
+        from {
+          background-position: -220px 0;
+        }
+        to {
+          background-position: 220px 0;
+        }
+      }
+
+      .result-ready {
+        --ring-color: var(--teal);
+        --result-soft: var(--teal-soft);
+        display: grid;
+        gap: 18px;
+      }
+
+      .result-ready.medium {
+        --ring-color: var(--gold);
+        --result-soft: var(--gold-soft);
+      }
+
+      .result-ready.high {
+        --ring-color: var(--danger);
+        --result-soft: var(--danger-soft);
+      }
+
+      .hero-result {
+        display: grid;
+        grid-template-columns: minmax(160px, 190px) minmax(0, 1fr);
+        gap: 18px;
+        padding: 20px;
+        border-radius: 24px;
+        background: var(--panel-strong);
+        border: 1px solid rgba(14, 23, 38, 0.08);
+      }
+
+      .confidence-ring {
+        --confidence: 0;
+        width: min(190px, 100%);
+        aspect-ratio: 1;
+        margin: 0 auto;
+        padding: 14px;
+        border-radius: 999px;
+        background:
+          conic-gradient(var(--ring-color) calc(var(--confidence) * 1%), rgba(14, 23, 38, 0.08) 0),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.72));
+        display: grid;
+        place-items: center;
+      }
+
+      .confidence-ring::before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(180deg, #fffdf9, #fff8f1);
+        box-shadow: inset 0 0 0 1px rgba(14, 23, 38, 0.06);
+        grid-area: 1 / 1;
+      }
+
+      .ring-copy {
+        grid-area: 1 / 1;
+        position: relative;
+        z-index: 1;
+        text-align: center;
+      }
+
+      .ring-copy strong {
+        display: block;
+        font-size: 2rem;
+        letter-spacing: -0.05em;
+      }
+
+      .ring-copy span {
+        display: block;
+        margin-top: 8px;
+        color: var(--ink-500);
+        font-size: 0.85rem;
+      }
+
+      .result-copy {
+        display: grid;
+        align-content: center;
+        gap: 12px;
+      }
+
+      .risk-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: fit-content;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .risk-chip.low {
+        background: var(--teal-soft);
+        color: var(--teal-deep);
+      }
+
+      .risk-chip.medium {
+        background: var(--gold-soft);
+        color: #8e5f0b;
+      }
+
+      .risk-chip.high {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .result-copy h3 {
+        font-size: 1.95rem;
+        line-height: 0.98;
+      }
+
+      .result-copy p {
+        margin: 0;
+        color: var(--ink-700);
+        line-height: 1.68;
+      }
+
+      .probability-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .probability-card {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.56);
+        border: 1px solid rgba(14, 23, 38, 0.08);
+      }
+
+      .probability-card.top {
+        border-color: rgba(228, 108, 56, 0.26);
+        box-shadow: 0 0 0 1px rgba(228, 108, 56, 0.08);
+      }
+
+      .probability-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        font-size: 0.92rem;
+        font-weight: 800;
+      }
+
+      .probability-track {
+        margin-top: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(14, 23, 38, 0.08);
+        overflow: hidden;
+      }
+
+      .probability-fill {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--ring-color), var(--accent));
+      }
+
+      .summary-card,
+      .signal-card,
+      .action-card,
+      .feature-card,
+      .file-card,
+      .support-card {
+        padding: 18px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(14, 23, 38, 0.08);
+      }
+
+      .summary-card {
+        background: linear-gradient(180deg, var(--result-soft), rgba(255, 255, 255, 0.72));
+      }
+
+      .summary-card p,
+      .signal-card p,
+      .action-card p,
+      .feature-card p,
+      .file-card p,
+      .support-card p {
+        margin: 0;
+        color: var(--ink-700);
+        line-height: 1.62;
+      }
+
+      .section-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .section-stack h4 {
+        font-size: 1.1rem;
+      }
+
+      .signal-grid,
+      .action-grid,
+      .feature-grid,
+      .file-grid,
+      .support-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .signal-meta,
+      .feature-rank,
+      .file-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .signal-meta.risk {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .signal-meta.support {
+        background: var(--teal-soft);
+        color: var(--teal-deep);
+      }
+
+      .feature-rank {
+        background: rgba(14, 23, 38, 0.06);
+        color: var(--ink-700);
+      }
+
+      .file-tag {
+        background: rgba(228, 108, 56, 0.1);
+        color: var(--accent-deep);
+      }
+
+      .feature-card strong,
+      .file-card strong,
+      .signal-card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+
+      .signal-card small,
+      .feature-card small {
+        display: block;
+        margin-top: 10px;
+        color: var(--ink-500);
+        line-height: 1.55;
+      }
+
+      .support-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .support-card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+
+      .empty-list {
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.48);
+        border: 1px dashed rgba(14, 23, 38, 0.12);
+        color: var(--ink-500);
+        text-align: center;
+      }
+
+      @media (max-width: 1180px) {
+        .masthead,
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .rail {
+          position: static;
+        }
+
+        .support-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .page-shell {
+          width: min(100% - 20px, 1320px);
+          padding-top: 14px;
+        }
+
+        .topbar,
+        .panel-head,
+        .block-head,
+        .hero-result {
+          flex-direction: column;
+        }
+
+        .topbar {
+          border-radius: 28px;
+          padding: 16px;
+          align-items: flex-start;
+        }
+
+        .topbar-actions {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .masthead,
+        .intake-panel,
+        .result-panel,
+        .insight-panel,
+        .system-panel,
+        .support-panel {
+          padding: 22px;
+        }
+
+        .status-strip,
+        .preview-grid,
+        .preview-subgrid,
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          max-width: 14ch;
+          font-size: clamp(2.5rem, 12vw, 3.8rem);
+        }
+
+        .hero-result {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .brand {
+          align-items: flex-start;
+        }
+
+        .actions,
+        .masthead-actions {
+          display: grid;
+        }
+
+        .primary-link,
+        .secondary-link,
+        .primary-button,
+        .secondary-button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar reveal">
+        <div class="brand">
+          <div class="brand-mark">SR</div>
+          <div class="brand-copy">
+            <strong>Student Risk Portal</strong>
+            <span>Local prediction workspace for academic performance coaching</span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <div class="status-pill" id="systemStatus" data-tone="warm">Connecting backend</div>
+          <a class="ghost-link" href="#intakePanel">Jump to assessment</a>
+        </div>
+      </header>
+
+      <section class="masthead panel reveal delay-1">
+        <div class="masthead-copy">
+          <p class="kicker">Academic Risk Intelligence</p>
+          <h1>Turn raw student inputs into confident, readable decisions.</h1>
+          <p class="lede">
+            This interface is built as a real operating surface, not a quick demo. It gives you a clean intake flow,
+            a premium live results panel, model health visibility, and a system map for the files powering the app.
+          </p>
+
+          <div class="masthead-actions">
+            <a class="primary-link" href="#intakePanel">Start a live assessment</a>
+            <button class="secondary-link" id="heroExampleButton" type="button">Load a sample profile</button>
+          </div>
+
+          <div class="status-strip">
+            <article class="status-card">
+              <span>Training Records</span>
+              <strong id="recordCount">--</strong>
+              <small>Live count from the dataset loaded by the backend.</small>
+            </article>
+            <article class="status-card">
+              <span>Model Accuracy</span>
+              <strong id="modelAccuracy">--</strong>
+              <small>Accuracy figure returned by the current trained classifier.</small>
+            </article>
+            <article class="status-card">
+              <span>Assessment Flow</span>
+              <strong>Profile / Predict / Act</strong>
+              <small>One page for intake, insight, and follow-up decisions.</small>
+            </article>
+          </div>
+        </div>
+
+        <div class="masthead-preview">
+          <article class="preview-card">
+            <span class="mini-label">Live model snapshot</span>
+            <div class="preview-grid">
+              <div class="preview-ring" id="previewRing" style="--progress: 77.5;">
+                <div class="preview-ring-copy">
+                  <strong id="accuracyBadge">--</strong>
+                  <span>Current model accuracy</span>
+                </div>
+              </div>
+              <div class="distribution-list" id="distributionGrid">
+                <div class="distribution-card">
+                  <strong><span>Loading</span><span>--</span></strong>
+                  <span>Fetching risk distribution from the backend.</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <div class="preview-subgrid">
+            <article>
+              <span class="mini-label">Data status</span>
+              <p id="recordsBadge">Waiting for model overview.</p>
+            </article>
+            <article>
+              <span class="mini-label">System shape</span>
+              <p>Single page frontend, local Python backend, and the trained model connected through JSON endpoints.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="main-grid">
+        <div class="stack">
+          <section class="intake-panel panel reveal delay-2" id="intakePanel">
+            <div class="panel-head">
+              <div>
+                <h2>Student intake</h2>
+                <p>
+                  Capture the student profile in structured sections so the prediction stays readable, fast, and easy
+                  to review.
+                </p>
+              </div>
+              <span class="panel-badge accent">Production-ready intake</span>
+            </div>
+
+            <form id="predictionForm">
+              <fieldset class="form-block">
+                <div class="block-head">
+                  <div>
+                    <h3 class="block-title">Academic rhythm</h3>
+                    <p>Core classroom and study signals that most strongly influence the model.</p>
+                  </div>
+                  <div class="block-index">01</div>
+                </div>
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="age">Age</label>
+                    <div class="control-shell">
+                      <input id="age" name="age" type="number" min="17" max="24" value="20" required />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="gender">Gender</label>
+                    <div class="control-shell">
+                      <select id="gender" name="gender" required>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="study_hours_per_day">Study hours per day</label>
+                    <div class="control-shell">
+                      <input id="study_hours_per_day" name="study_hours_per_day" type="number" min="0" max="10" step="0.1" value="3.5" required />
+                    </div>
+                    <small>Typical dataset range is 0 to 8.3 hours.</small>
+                  </div>
+                  <div class="field">
+                    <label for="attendance_percentage">Attendance percentage</label>
+                    <div class="control-shell">
+                      <input id="attendance_percentage" name="attendance_percentage" type="number" min="0" max="100" step="0.1" value="86" required />
+                    </div>
+                    <small>Attendance is one of the strongest signals in this model.</small>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="form-block">
+                <div class="block-head">
+                  <div>
+                    <h3 class="block-title">Lifestyle and wellbeing</h3>
+                    <p>Daily routine, energy, and balance indicators that shape the risk explanation.</p>
+                  </div>
+                  <div class="block-index">02</div>
+                </div>
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="sleep_hours">Sleep hours</label>
+                    <div class="control-shell">
+                      <input id="sleep_hours" name="sleep_hours" type="number" min="0" max="12" step="0.1" value="7" required />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="social_media_hours">Social media hours</label>
+                    <div class="control-shell">
+                      <input id="social_media_hours" name="social_media_hours" type="number" min="0" max="10" step="0.1" value="2" required />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="mental_health_rating">Mental health rating</label>
+                    <div class="control-shell">
+                      <input id="mental_health_rating" name="mental_health_rating" type="number" min="1" max="10" step="1" value="6" required />
+                    </div>
+                    <small>Use a 1 to 10 scale based on current wellbeing.</small>
+                  </div>
+                  <div class="field">
+                    <label for="exercise_frequency">Exercise days per week</label>
+                    <div class="control-shell">
+                      <input id="exercise_frequency" name="exercise_frequency" type="number" min="0" max="6" step="1" value="3" required />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="diet_quality">Diet quality</label>
+                    <div class="control-shell">
+                      <select id="diet_quality" name="diet_quality" required>
+                        <option value="Good">Good</option>
+                        <option value="Fair" selected>Fair</option>
+                        <option value="Poor">Poor</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="internet_quality">Internet quality</label>
+                    <div class="control-shell">
+                      <select id="internet_quality" name="internet_quality" required>
+                        <option value="Good">Good</option>
+                        <option value="Average" selected>Average</option>
+                        <option value="Poor">Poor</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="form-block">
+                <div class="block-head">
+                  <div>
+                    <h3 class="block-title">Context and support</h3>
+                    <p>Background factors that help the model interpret the student environment.</p>
+                  </div>
+                  <div class="block-index">03</div>
+                </div>
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="part_time_job">Part-time job</label>
+                    <div class="control-shell">
+                      <select id="part_time_job" name="part_time_job" required>
+                        <option value="No" selected>No</option>
+                        <option value="Yes">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="extracurricular_participation">Extracurricular participation</label>
+                    <div class="control-shell">
+                      <select id="extracurricular_participation" name="extracurricular_participation" required>
+                        <option value="Yes" selected>Yes</option>
+                        <option value="No">No</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field span-2">
+                    <label for="parental_education_level">Parental education level</label>
+                    <div class="control-shell">
+                      <select id="parental_education_level" name="parental_education_level" required>
+                        <option value="Bachelor" selected>Bachelor</option>
+                        <option value="High School">High School</option>
+                        <option value="Master">Master</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="actions">
+                <button class="primary-button" id="submitButton" type="submit">Run student assessment</button>
+                <button class="secondary-button" id="fillRiskyButton" type="button">Load high-risk sample</button>
+                <button class="secondary-button" type="reset">Reset the form</button>
+              </div>
+              <p class="form-footnote">
+                The backend still validates and normalizes payload values, so this polished UI remains safely aligned
+                with the existing prediction service.
+              </p>
+            </form>
+          </section>
+
+          <section class="system-panel panel">
+            <div class="panel-head">
+              <div>
+                <h2>System map</h2>
+                <p>Every major file in the folder is documented here so the project stays understandable after handoff.</p>
+              </div>
+              <span class="panel-badge gold">Single doctype file guide</span>
+            </div>
+            <div class="file-grid" id="fileGrid">
+              <div class="empty-list">Loading project file details.</div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="rail">
+          <section class="result-panel panel">
+            <div class="panel-head">
+              <div>
+                <h2>Live assessment</h2>
+                <p>Prediction output, confidence, risk split, and the suggested next actions appear here.</p>
+              </div>
+              <div class="status-pill" id="predictionStatus" data-tone="warm">Awaiting input</div>
+            </div>
+            <div id="resultContainer" class="result-empty">
+              <div>
+                <h3>Ready for assessment</h3>
+                <p>Submit a student profile to open the live results workspace and the model-generated action plan.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="insight-panel panel">
+            <div class="panel-head">
+              <div>
+                <h2>Model signals</h2>
+                <p>These are the strongest feature groups influencing the trained classifier right now.</p>
+              </div>
+              <span class="panel-badge teal">Feature importance</span>
+            </div>
+            <div class="feature-grid" id="topFeatures">
+              <div class="empty-list">Loading feature priorities.</div>
+            </div>
+          </section>
+
+          <section class="support-panel panel">
+            <div class="panel-head">
+              <div>
+                <h2>Why this feels production-ready</h2>
+                <p>The page now communicates system state, input structure, and output confidence much more clearly.</p>
+              </div>
+            </div>
+            <div class="support-grid">
+              <article class="support-card">
+                <strong>Clear visual hierarchy</strong>
+                <p>Large editorial headline, grouped inputs, and a dedicated results rail reduce scanning effort.</p>
+              </article>
+              <article class="support-card">
+                <strong>Better operational feedback</strong>
+                <p>Status pills, loading states, and stronger confidence presentation make the system feel trustworthy.</p>
+              </article>
+              <article class="support-card">
+                <strong>Mobile-safe layout</strong>
+                <p>The grid compresses into a readable single-column flow without breaking the form or result cards.</p>
+              </article>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </div>
+
+    <script>
+      const form = document.getElementById("predictionForm");
+      const resultContainer = document.getElementById("resultContainer");
+      const submitButton = document.getElementById("submitButton");
+      const fillRiskyButton = document.getElementById("fillRiskyButton");
+      const heroExampleButton = document.getElementById("heroExampleButton");
+      const systemStatus = document.getElementById("systemStatus");
+      const predictionStatus = document.getElementById("predictionStatus");
+
+      const riskyExample = {
+        age: 19,
+        gender: "Male",
+        study_hours_per_day: 1.3,
+        attendance_percentage: 68,
+        sleep_hours: 5.1,
+        social_media_hours: 5.2,
+        mental_health_rating: 3,
+        exercise_frequency: 1,
+        diet_quality: "Poor",
+        internet_quality: "Poor",
+        part_time_job: "Yes",
+        extracurricular_participation: "No",
+        parental_education_level: "High School"
+      };
+
+      const escapeHTML = (value) =>
+        String(value ?? "").replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "\"": "&quot;",
+          "'": "&#39;"
+        }[char]));
+
+      const riskClassName = (risk) => {
+        const value = String(risk || "").toLowerCase();
+        if (value === "high") return "high";
+        if (value === "medium") return "medium";
+        return "low";
+      };
+
+      const formatPercent = (value) => `${Number(value).toFixed(1)}%`;
+
+      const setStatus = (element, text, tone) => {
+        element.textContent = text;
+        element.dataset.tone = tone;
+      };
+
+      const renderEmptyState = () => {
+        resultContainer.className = "result-empty";
+        resultContainer.innerHTML = `
+          <div>
+            <h3>Ready for assessment</h3>
+            <p>Submit a student profile to open the live results workspace and the model-generated action plan.</p>
+          </div>
+        `;
+        setStatus(predictionStatus, "Awaiting input", "warm");
+      };
+
+      const renderLoadingState = () => {
+        resultContainer.className = "result-loading";
+        resultContainer.innerHTML = `
+          <div>
+            <h3>Running the model</h3>
+            <p>The backend is evaluating the profile and preparing the risk explanation.</p>
+            <div class="loading-stack">
+              <div class="loading-line"></div>
+              <div class="loading-line"></div>
+              <div class="loading-line"></div>
+            </div>
+          </div>
+        `;
+        setStatus(predictionStatus, "Running assessment", "warm");
+      };
+
+      const renderError = (message) => {
+        resultContainer.className = "result-error";
+        resultContainer.innerHTML = `
+          <div>
+            <h3>Prediction unavailable</h3>
+            <p>${escapeHTML(message)}</p>
+          </div>
+        `;
+        setStatus(predictionStatus, "Service issue", "alert");
+      };
+
+      const collectFormData = () => {
+        const data = Object.fromEntries(new FormData(form).entries());
+        return {
+          age: Number(data.age),
+          gender: data.gender,
+          study_hours_per_day: Number(data.study_hours_per_day),
+          attendance_percentage: Number(data.attendance_percentage),
+          sleep_hours: Number(data.sleep_hours),
+          social_media_hours: Number(data.social_media_hours),
+          mental_health_rating: Number(data.mental_health_rating),
+          exercise_frequency: Number(data.exercise_frequency),
+          diet_quality: data.diet_quality,
+          internet_quality: data.internet_quality,
+          part_time_job: data.part_time_job,
+          extracurricular_participation: data.extracurricular_participation,
+          parental_education_level: data.parental_education_level
+        };
+      };
+
+      const applyExample = (example) => {
+        Object.entries(example).forEach(([key, value]) => {
+          const field = form.elements.namedItem(key);
+          if (field) field.value = value;
+        });
+      };
+
+      const scrollResultIntoView = () => {
+        if (window.matchMedia("(max-width: 1180px)").matches) {
+          resultContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      };
+
+      const renderOverview = (overview) => {
+        const modelAccuracy = Number(overview.model_accuracy || 0);
+        document.getElementById("recordCount").textContent = overview.record_count ?? "--";
+        document.getElementById("modelAccuracy").textContent = formatPercent(modelAccuracy);
+        document.getElementById("accuracyBadge").textContent = formatPercent(modelAccuracy);
+        document.getElementById("recordsBadge").textContent = `${overview.record_count} records loaded from the live dataset.`;
+        document.getElementById("previewRing").style.setProperty("--progress", modelAccuracy.toFixed(1));
+
+        const distribution = [
+          {
+            label: "Low risk",
+            key: "Low",
+            note: "Students already showing steady study and support patterns."
+          },
+          {
+            label: "Medium risk",
+            key: "Medium",
+            note: "Students who need active monitoring and a few habit corrections."
+          },
+          {
+            label: "High risk",
+            key: "High",
+            note: "Students with multiple warning signals and lower performance stability."
+          }
+        ];
+
+        document.getElementById("distributionGrid").innerHTML = distribution
+          .map(
+            (item) => `
+              <article class="distribution-card">
+                <strong><span>${escapeHTML(item.label)}</span><span>${escapeHTML(overview.risk_distribution[item.key] ?? "--")}</span></strong>
+                <span>${escapeHTML(item.note)}</span>
+              </article>
+            `
+          )
+          .join("");
+
+        document.getElementById("topFeatures").innerHTML = (overview.top_features || [])
+          .map(
+            (item, index) => `
+              <article class="feature-card">
+                <span class="feature-rank">Rank ${index + 1}</span>
+                <strong>${escapeHTML(item.feature)}</strong>
+                <p>${formatPercent(item.importance)} model importance</p>
+                <small>This feature is one of the strongest contributors in the current classifier.</small>
+              </article>
+            `
+          )
+          .join("") || `<div class="empty-list">No feature importance data was returned.</div>`;
+
+        document.getElementById("fileGrid").innerHTML = (overview.project_files || [])
+          .map(
+            (file) => `
+              <article class="file-card">
+                <span class="file-tag">${escapeHTML(file.purpose)}</span>
+                <strong>${escapeHTML(file.name)}</strong>
+                <p>${escapeHTML(file.details)}</p>
+              </article>
+            `
+          )
+          .join("") || `<div class="empty-list">No file details were returned by the backend.</div>`;
+
+        setStatus(systemStatus, "Backend connected", "live");
+      };
+
+      const renderResult = (result) => {
+        const riskTone = riskClassName(result.risk_level);
+        const confidencePercent = Math.max(0, Math.min(100, Number(result.confidence) * 100));
+        const probabilityCards = Object.entries(result.probabilities || {})
+          .map(
+            ([label, value]) => `
+              <article class="probability-card ${label === result.risk_level ? "top" : ""}">
+                <div class="probability-head">
+                  <span>${escapeHTML(label)} risk</span>
+                  <span>${formatPercent(value)}</span>
+                </div>
+                <div class="probability-track">
+                  <span class="probability-fill" style="width: ${Math.max(4, Number(value))}%"></span>
+                </div>
+              </article>
+            `
+          )
+          .join("");
+
+        const factors = (result.top_factors || [])
+          .map(
+            (factor) => `
+              <article class="signal-card">
+                <span class="signal-meta ${escapeHTML(factor.direction)}">
+                  ${factor.direction === "risk" ? "Risk driver" : "Protective signal"}
+                </span>
+                <strong>${escapeHTML(factor.feature)}</strong>
+                <p>${escapeHTML(factor.detail)}</p>
+                <small>Recommended action: ${escapeHTML(factor.recommendation)}</small>
+              </article>
+            `
+          )
+          .join("");
+
+        const advice = (result.advice || [])
+          .map(
+            (item) => `
+              <article class="action-card">
+                <p>${escapeHTML(item)}</p>
+              </article>
+            `
+          )
+          .join("");
+
+        resultContainer.className = `result-ready ${riskTone}`;
+        resultContainer.innerHTML = `
+          <div class="hero-result">
+            <div class="confidence-ring" style="--confidence: ${confidencePercent.toFixed(1)};">
+              <div class="ring-copy">
+                <strong>${formatPercent(confidencePercent)}</strong>
+                <span>confidence</span>
+              </div>
+            </div>
+
+            <div class="result-copy">
+              <span class="risk-chip ${riskTone}">${escapeHTML(result.risk_level)} risk</span>
+              <h3>${escapeHTML(result.risk_level)} risk profile detected</h3>
+              <p>${escapeHTML(result.summary)}</p>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <p>The confidence split below shows how strongly the classifier leans toward each outcome for this profile.</p>
+          </div>
+
+          <div class="section-stack">
+            <h4>Risk distribution</h4>
+            <div class="probability-grid">${probabilityCards}</div>
+          </div>
+
+          <div class="section-stack">
+            <h4>Top signals</h4>
+            <div class="signal-grid">${factors}</div>
+          </div>
+
+          <div class="section-stack">
+            <h4>Recommended action plan</h4>
+            <div class="action-grid">${advice}</div>
+          </div>
+        `;
+
+        setStatus(predictionStatus, `${result.risk_level} risk returned`, riskTone === "low" ? "live" : riskTone === "medium" ? "warm" : "alert");
+        scrollResultIntoView();
+      };
+
+      const loadOverview = async () => {
+        try {
+          const response = await fetch("/api/health");
+          if (!response.ok) {
+            throw new Error("Could not load app overview.");
+          }
+          const data = await response.json();
+          renderOverview(data);
+        } catch (error) {
+          setStatus(systemStatus, "Backend unavailable", "alert");
+          renderError(error.message);
+        }
+      };
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        submitButton.disabled = true;
+        submitButton.textContent = "Running assessment";
+        renderLoadingState();
+
+        try {
+          const response = await fetch("/api/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(collectFormData())
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || "Prediction failed.");
+          }
+          renderResult(data);
+        } catch (error) {
+          renderError(error.message);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "Run student assessment";
+        }
+      });
+
+      fillRiskyButton.addEventListener("click", () => applyExample(riskyExample));
+      heroExampleButton.addEventListener("click", () => {
+        applyExample(riskyExample);
+        document.getElementById("intakePanel").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      form.addEventListener("reset", () => {
+        window.setTimeout(renderEmptyState, 0);
+      });
+
+      renderEmptyState();
+      loadOverview();
+    </script>
+  </body>
+</html>
