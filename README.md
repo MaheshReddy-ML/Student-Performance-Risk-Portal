@@ -89,21 +89,21 @@ git clone https://github.com/MaheshReddy-ML/student-performance-risk-portal.git
 If you choose a different repository name, replace the last part of the URL accordingly:
 
 ```bash
-git clone https://github.com/MaheshReddy-ML/<your-repository-name>.git
+git clone https://github.com/MaheshReddy-ML/<student-performance-risk-portal>.git
 ```
 
 ## How to Clone the Project
 
 ```bash
-git clone https://github.com/MaheshReddy-ML/<your-repository-name>.git
-cd <your-repository-name>/student
+git clone https://github.com/MaheshReddy-ML/<student-performance-risk-portal>.git
+cd <student-performance-risk-portal>/student
 ```
 
 If the `student` folder itself is the root of your GitHub repository, then use:
 
 ```bash
-git clone https://github.com/MaheshReddy-ML/<your-repository-name>.git
-cd <your-repository-name>
+git clone https://github.com/MaheshReddy-ML/<student-performance-risk-portal>.git
+cd <student-performance-risk-portal>
 ```
 
 ## Requirements
