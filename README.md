@@ -1,3 +1,7 @@
+## 🌐 Live Deployment
+
+- API: https://student-performance-risk-portal-2.onrender.com  
+
 # Student Performance Risk Portal
 
 A production-style student performance risk prediction project built with Python, scikit-learn, and a single-page frontend.
